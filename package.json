@@ -1,0 +1,19 @@
+{
+  "name": "ahgora",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/renancf01/Teste_Ahgora.git"
+  },
+  "author": "Renan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/renancf01/Teste_Ahgora/issues"
+  },
+  "homepage": "https://github.com/renancf01/Teste_Ahgora#readme"
+}
