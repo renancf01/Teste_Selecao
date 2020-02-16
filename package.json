@@ -15,5 +15,19 @@
   "bugs": {
     "url": "https://github.com/renancf01/Teste_Ahgora/issues"
   },
-  "homepage": "https://github.com/renancf01/Teste_Ahgora#readme"
+  "homepage": "https://github.com/renancf01/Teste_Ahgora#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "csvtojson": "^2.0.10",
+    "easy-soap-request": "^3.2.0",
+    "express": "^4.17.1",
+    "flatten": "^1.0.3",
+    "json2csv": "^4.5.4",
+    "request": "^2.88.2",
+    "soap": "^0.30.0",
+    "strong-soap": "^1.22.0",
+    "xml": "^1.0.1",
+    "xml2js": "^0.4.23",
+    "xmlbuilder": "^14.0.0"
+  }
 }
