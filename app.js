@@ -13,19 +13,17 @@ const requestArgs = {
     
 };
 
+const funcFile = fs.readFileSync('importa_dados_funcionarios.xml')
+
 let xml =
-`<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.ahgora.com.br/ws">
-    <soapenv:Header/>
-        <soapenv:Body>
-            <sincFuncionarios>
-            <empresa>64605baf3985fb82c9c59b26148c685c</empresa>
-                <funcionarios>
-                    <funcionario>
-                    </funcionario>
-                </funcionarios>
-            </sincFuncionarios>
-        </soapenv:Body>
-<soapenv:Envelope>`;
+'<?xml version="1.0" encoding="UTF-8"?>'+
+'<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="https://www.ahgora.com.br/ws">'+
+    '<SOAP-ENV:Body>'+
+        '<ns1:sincFuncionariosResponse>'+
+            '<totais>'+ funcFile +'</totais>'+
+        '</ns1:sincFuncionariosResponse>'+
+    '</SOAP-ENV:Body>'+
+'</SOAP-ENV:Envelope>;'
 
 const options = {
     uri: 'http://www.ahgora.com.br/',
@@ -37,15 +35,19 @@ const options = {
         'SOAPAction':"https://www.ahgora.com.br/ws/pontoweb.php/sincFuncionarios"}
     };
 
+    
 
-    soap.createClient(url, options, (err, client) => {
-    client.sincFuncionarios(requestArgs, (err, result, envelope, soapHeader) =>{
+    soap.createClient(url, options,(err, client) => {
         
-        const funcFile = fs.readFileSync('sincFuncionarios.csv')
+    client.sincFuncionarios(requestArgs, (err, result, envelope, body) =>{
+        
+        // const funcFile = fs.readFileSync('sincFuncionarios.csv')
         
         console.log('Response envelope: \n' + envelope );
         console.log('Result: \n' + JSON.stringify(result));
-        console.log('Funcionarios: \n' + funcFile)
+        console.log('Result: \n' + JSON.stringify(options.body));
+        
+        // console.log('Funcionarios: \n' + funcFile)
     })
     
     });
