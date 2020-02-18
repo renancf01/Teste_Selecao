@@ -6,10 +6,13 @@ const fs = require('fs');
 const {parse} = require('json2csv')
 const csv = require('csv');
 const request = require('request-promise-native')
+const bodyParser = require('body-parser');
+
+router.use(bodyParser.json());
 
 const url = 'https://www.ahgora.com.br/ws/pontoweb.php?wsdl';
 
-const obj = csv();
+const clientCSV = csv();
 
 function MyCSV(matricula, nome, sexo,pis,email,cpf,rg,cargo,departamento,dataNascimento,dataAdmissao) {
     this.matricula = matricula;
@@ -28,7 +31,7 @@ function MyCSV(matricula, nome, sexo,pis,email,cpf,rg,cargo,departamento,dataNas
 
 let funcionario = [];
 
-obj.from.path('importa_dados_func.csv').to.array(function (data) {
+clientCSV.from.path('importa_dados_func.csv').to.array(function (data) {
    
     for (var index = 0; index < data.length; index++) {
         funcionario.push(new MyCSV(data[index][0], data[index][1], data[index][2], data[index][3], data[index][4], data[index][5], data[index][6], data[index][7], data[index][8], data[index][9], data[index][10]));
@@ -52,46 +55,38 @@ const options = {
 
 const args = {empresa: 'b75cedcca855b58fc76ca7a5ee08e094'}
 
-router.post('/export', (req, res) => {
+router.post('/export', async (req, res) => {
+    const { fields } =  req.body || []
     
-    soap.createClient(url, (err, client) => {
-        if(err){
-                res.send({message: err});
-            }
-            
-        client.obterFuncionarios(args, (err, result) => {
-            if(err){
-                res.send({messange: err});
+    const client = await soap.createClientAsync(url)
+    const result = await client.obterFuncionariosAsync(args);
+    let listJson = result[0].funcionarios.funcionario
+    const newList = listJson.map( funcionario => {
+        let newFuncionario = {};
+
+        fields.forEach(key => {
+            if (funcionario[key]) {
+                newFuncionario[key] = funcionario[key]
             }
 
-            let listJson = result.funcionarios.funcionario
-            
-            const csv = parse(listJson)
-
-            res.send(fs.writeFileSync('./extracao_func.csv', csv));
-            
         })
-        res.send('Funcionários exportado com sucesso.');
-    });
+        return newFuncionario;
+    })
+    const csv = parse(newList);
+
+    res.send(fs.writeFileSync('./extracao_func.csv', csv));
+    res.send('Funcionários exportado com sucesso.');
 });
 
-router.post('/import', (req, res) => {
+router.post('/import', async (req, res) => {
     
-    soap.createClient(url, options, (error, client) =>{
-        if(error){
-            console.log(error);
-        }
-        
-        client.sincFuncionarios(body, (err, result, rawResponse, soapHeader, rawRequest) => {
-            console.log(rawRequest)
-            if(err){
-                res.send({message: err});
-            }
-        
-            res.send(result)
-
-        })
-     })
+    const client = await soap.createClientAsync(url, options);
+    try {
+        const result = await client.sincFuncionariosAsync(body)
+        res.send(result)
+    } catch (error) {
+         res.send({message: error});
+    }
 })
 
-router.listen(3000);
+router.listen(3000, ()=> console.log('subiu na porta 3000'));
