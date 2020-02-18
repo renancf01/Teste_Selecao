@@ -29,6 +29,7 @@
     "http": "0.0.0",
     "json2csv": "^4.5.4",
     "request": "^2.88.2",
+    "request-promise-native": "^1.0.8",
     "soap": "^0.30.0",
     "strong-soap": "^1.22.0",
     "xml": "^1.0.1",

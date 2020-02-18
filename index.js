@@ -1,50 +1,41 @@
 "use strict";
 const express = require('express');
-
 const router = express();
 const soap = require('soap');
 const fs = require('fs');
-const readFile = require('fs').readFile;
 const {parse} = require('json2csv')
-const csv = require('csv-parser');
-const request = require('request')
-
-
+const csv = require('csv');
+const request = require('request-promise-native')
 
 const url = 'https://www.ahgora.com.br/ws/pontoweb.php?wsdl';
 
+const obj = csv();
+
+function MyCSV(matricula, nome, sexo,pis,email,cpf,rg,cargo,departamento,dataNascimento,dataAdmissao) {
+    this.matricula = matricula;
+    this.nome = nome;
+    this.sexo = sexo;
+    this.pis = pis;
+    this.email = email;
+    this.cpf = cpf;
+    this.rg = rg;
+    this.cargo = cargo;
+    this.departamento = departamento;
+    this.dataNascimento = dataNascimento;
+    this.dataAdmissao = dataAdmissao;
+   
+}; 
 
 let funcionario = [];
-fs.createReadStream('importa_dados_func.csv')
-    .pipe(csv({separator: '\;'}))
-    .on('headers', (headers)=> {
-        funcionario.push(`
-        matricula: ${headers[0]}
-        nome: ${headers[1]}
-        sexo: ${headers[2]}
-        pis: ${headers[3]}
-        email: ${headers[4]}
-        cpf: ${headers[5]}
-        rg: ${headers[6]}
-        cargo: ${headers[7]}
-        departamento: ${headers[8]}
-        dataNascimento: ${headers[9]}
-        dataAdmissao: ${headers[10]}
-        `)
-        
-    })
-    .on('close', function(){
-        callback(funcionario)
-    })
 
+obj.from.path('importa_dados_func.csv').to.array(function (data) {
+   
+    for (var index = 0; index < data.length; index++) {
+        funcionario.push(new MyCSV(data[index][0], data[index][1], data[index][2], data[index][3], data[index][4], data[index][5], data[index][6], data[index][7], data[index][8], data[index][9], data[index][10]));
+    }
+    
+});
 
-// let funcionario = {
-//     nome: 'Renan Carvalho',
-//     pis: '73971332865',
-//     dataAdmissao: '15022020',
-//     matricula: '1234',
-//     cpf: '082.846.439-10'
-// }
 const body = {
     empresa: 'b75cedcca855b58fc76ca7a5ee08e094',
     funcionarios: {funcionario}
@@ -59,6 +50,7 @@ const options = {
     
 }
 
+const args = {empresa: 'b75cedcca855b58fc76ca7a5ee08e094'}
 
 router.post('/export', (req, res) => {
     
@@ -66,17 +58,20 @@ router.post('/export', (req, res) => {
         if(err){
                 res.send({message: err});
             }
+            
         client.obterFuncionarios(args, (err, result) => {
             if(err){
                 res.send({messange: err});
             }
 
-            const jsonResult =  result.funcionarios.funcionario
-            const csv = parse(jsonResult)
+            let listJson = result.funcionarios.funcionario
             
+            const csv = parse(listJson)
+
             res.send(fs.writeFileSync('./extracao_func.csv', csv));
-        
+            
         })
+        res.send('Funcionários exportado com sucesso.');
     });
 });
 
@@ -98,6 +93,5 @@ router.post('/import', (req, res) => {
         })
      })
 })
-
 
 router.listen(3000);
