@@ -3,9 +3,9 @@ const express = require('express');
 const router = express();
 const soap = require('soap');
 const fs = require('fs');
-const {parse} = require('json2csv')
+const {parse} = require('json2csv');
 const csv = require('csv');
-const request = require('request-promise-native')
+const request = require('request-promise-native');
 
 const url = 'https://www.ahgora.com.br/ws/pontoweb.php?wsdl';
 
@@ -63,9 +63,9 @@ router.post('/export', (req, res) => {
             if(err){
                 res.send({messange: err});
             }
-
+        
             let listJson = result.funcionarios.funcionario
-            
+                         
             const csv = parse(listJson)
 
             res.send(fs.writeFileSync('./extracao_func.csv', csv));
