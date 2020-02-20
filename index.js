@@ -79,7 +79,7 @@ router.post('/import', (req, res) => {
     
     soap.createClient(url, options, (error, client) =>{
         if(error){
-            console.log(error);
+            res.send(error);
         }
         
         client.sincFuncionarios(body, (err, result, rawResponse, soapHeader, rawRequest) => {
