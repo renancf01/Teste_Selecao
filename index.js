@@ -9,9 +9,9 @@ const request = require('request-promise-native');
 
 const url = 'https://www.ahgora.com.br/ws/pontoweb.php?wsdl';
 
-const obj = csv();
+const importCsv = csv();
 
-function MyCSV(matricula, nome, sexo,pis,email,cpf,rg,cargo,departamento,dataNascimento,dataAdmissao) {
+function MyCsv(matricula, nome, sexo,pis,email,cpf,rg,cargo,departamento,dataNascimento,dataAdmissao) {
     this.matricula = matricula;
     this.nome = nome;
     this.sexo = sexo;
@@ -28,7 +28,7 @@ function MyCSV(matricula, nome, sexo,pis,email,cpf,rg,cargo,departamento,dataNas
 
 let funcionario = [];
 
-obj.from.path('importa_dados_func.csv').to.array(function (data) {
+importCsv.from.path('importa_dados_func.csv').to.array(function (data) {
    
     for (var index = 0; index < data.length; index++) {
         funcionario.push(new MyCSV(data[index][0], data[index][1], data[index][2], data[index][3], data[index][4], data[index][5], data[index][6], data[index][7], data[index][8], data[index][9], data[index][10]));
@@ -36,8 +36,10 @@ obj.from.path('importa_dados_func.csv').to.array(function (data) {
     
 });
 
+const chaveSoap = 'b75cedcca855b58fc76ca7a5ee08e094';
+
 const body = {
-    empresa: 'b75cedcca855b58fc76ca7a5ee08e094',
+    empresa: cahveSoap,
     funcionarios: {funcionario}
 }
 const options = {
@@ -50,7 +52,7 @@ const options = {
     
 }
 
-const args = {empresa: 'b75cedcca855b58fc76ca7a5ee08e094'}
+const args = chaveSoap;
 
 router.post('/export', (req, res) => {
     
@@ -83,7 +85,6 @@ router.post('/import', (req, res) => {
         }
         
         client.sincFuncionarios(body, (err, result, rawResponse, soapHeader, rawRequest) => {
-            console.log(rawRequest)
             if(err){
                 res.send({message: err});
             }
