@@ -27,6 +27,7 @@
     "express": "^4.17.1",
     "fast-csv": "^4.1.0",
     "flatten": "^1.0.3",
+    "fs": "0.0.1-security",
     "http": "0.0.0",
     "json2csv": "^4.5.4",
     "request": "^2.88.2",
