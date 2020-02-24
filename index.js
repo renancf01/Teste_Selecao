@@ -1,11 +1,13 @@
 "use strict";
 const express = require('express');
-const router = express();
+const app = express();
 const soap = require('soap');
 const fs = require('fs');
 const {parse} = require('json2csv');
 const csv = require('csv');
 const request = require('request-promise-native');
+
+const app = express()
 
 const url = 'https://www.ahgora.com.br/ws/pontoweb.php?wsdl';
 
@@ -52,46 +54,48 @@ const options = {
 
 const args = {empresa: 'b75cedcca855b58fc76ca7a5ee08e094'}
 
-router.post('/export', (req, res) => {
+// router.post('/export', (req, res) => {
     
     soap.createClient(url, (err, client) => {
+        console.log(client)
         if(err){
-                res.send({message: err});
+                // res.send({message: err});
             }
             
-        client.obterFuncionarios(args, (err, result) => {
+        client.obterFuncionariosAsync(args, (err, result) => {
             if(err){
-                res.send({messange: err});
+                // res.send({messange: err});
             }
         
             let listJson = result.funcionarios.funcionario
                          
             const csv = parse(listJson)
 
-            res.send(fs.writeFileSync('./extracao_func.csv', csv));
+            // res.send(fs.writeFileSync('./extracao_func.csv', csv));
             
         })
-        res.send('Funcionários exportado com sucesso.');
+        // res.send('Funcionários exportado com sucesso.');
     });
-});
+// });
 
-router.post('/import', (req, res) => {
+// router.post('/import', (req, res) => {
     
-    soap.createClient(url, options, (error, client) =>{
-        if(error){
-            res.send(error);
-        }
+//     soap.createClient(url, options, (error, client) =>{
+//         if(error){
+//             res.send(error);
+//         }
         
-        client.sincFuncionarios(body, (err, result, rawResponse, soapHeader, rawRequest) => {
+//         client.sincFuncionarios(body, (err, result, rawResponse, soapHeader, rawRequest) => {
             
-            if(err){
-                res.send({message: err});
-            }
+//             if(err){
+//                 res.send({message: err});
+//             }
         
-            res.send(result)
+//             res.send(result)
 
-        })
-     })
-})
+//         })
+//      })
+// })
 
-router.listen(3000);
+// router.listen(3000);
+
