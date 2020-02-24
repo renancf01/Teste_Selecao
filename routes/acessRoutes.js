@@ -1,3 +1,4 @@
+"use strict";
 const csv = require('csv');
 const request = require('request-promise-native');
 

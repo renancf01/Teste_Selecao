@@ -1,4 +1,3 @@
-"use strict";
 const express = require('express');
 const exportEmployee = require('./routes/exportFunc')
 const importEmployee = require('./routes/importFunc')

@@ -1,3 +1,4 @@
+"use strict";
 const express = require('express');
 const soap = require('soap');
 const fs = require('fs');
